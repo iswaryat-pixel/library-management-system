@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="libraryApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+
+<body ng-controller="LibraryController">
+    <div class="login-page" ng-if="!isLoggedIn">
+        <div class="login-box">
+            <h1>Library Login</h1>
+            <p>Library Management System</p>
+            <form ng-submit="login()"><label>Username</label><input ng-model="loginData.username" required>
+                <label>Password</label><input type="password" ng-model="loginData.password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="error" ng-if="loginError">{{loginError}}</p>
+            <p>Demo: admin / admin123</p>
+        </div>
+    </div>
+    <div ng-if="isLoggedIn">
+        <header>
+            <h1>Library Management System</h1><span>Welcome, {{loginData.username}}</span> <button
+                ng-click="logout()">Logout</button>
+        </header>
+        <main>
+            <section class="box">
+                <h2>{{editing ? 'Update Book' : 'Add New Book'}}</h2>
+                <form ng-submit="saveBook()"><label>Book Title</label><input ng-model="book.title" required>
+                    <label>Author Name</label><input ng-model="book.author" required>
+                    <label>Category</label><input ng-model="book.category" required>
+                    <label>Status</label><select ng-model="book.status">
+                        <option value="Available">Available</option>
+                        <option value="Issued">Issued</option>
+                    </select>
+                    <button type="submit">{{editing ? 'Update Book' : 'Add Book'}}</button><button type="button"
+                        ng-if="editing" ng-click="cancelEdit()">Cancel</button>
+                </form>
+                <p class="message">{{message}}</p>
+                <p class="error">{{error}}</p>
+            </section>
+            <section class="box">
+                <h2>Book Collection</h2><input ng-model="searchText" placeholder="Search books">
+                <p ng-if="loading">Loading books...</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="b in books | filter:searchText track by b._id">
+                            <td>{{b.title}}</td>
+                            <td>{{b.author}}</td>
+                            <td>{{b.category}}</td>
+                            <td>{{b.status}}</td>
+                            <td><button ng-click="editBook(b)">Edit</button> <button
+                                    ng-click="deleteBook(b)">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p ng-if="!loading && books.length===0">No books available.</p>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>
